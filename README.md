@@ -181,6 +181,18 @@ my-nginx-568fcc5c7-d6j6x   1/1       Running       0          20s
 
 ### Download and Install Hyperledger Fabric
 
+1. Download Hyprledger Fabric Images (the script shown in the listing is in the root folder of this repository).
+
+```
+./download-dockerimages.sh -c x86_64-1.0.0-beta -f x86_64-1.0.0-beta
+```
+
+2. Start the Hyperledger Fabric Network and the CLI.
+
+```
+./start-fabric.sh
+```
+
 
 
 
