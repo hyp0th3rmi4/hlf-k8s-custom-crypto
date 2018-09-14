@@ -109,6 +109,79 @@ cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 # sudo systemctl restart kubelet
 ```
 
+3. Configure Kubernetes to run on single node cluster. We will be using the `kubeadm`command to automatically configure the cluster according to the best practices.
+
+```
+sudo kubeadm init --pod-network-cidr=192.168.0.16
+```
+
+4. Copy the Kubernetes configuration into your home directory.
+
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+5. Install a networking plugin (example shown for Calico)
+
+```
+# install the etcd service...
+kubectl apply -f https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/etcd.yaml
+
+# install the role-based access control (RBAC) roles...
+kubectl apply -f https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/rbac.yaml
+
+# install the role-based access control (RBAC) roles...
+kubectl apply -f https://docs.projectcalico.org/v3.2/getting-started/kubernetes/installation/hosted/calico.yaml
+```
+6. Verify your installation of Calico. If the installation is successful, you should see something similar to the following output:
+
+```
+NAMESPACE    NAME                                READY  STATUS   RESTARTS  AGE
+kube-system  calico-etcd-x2482                   1/1    Running  0         2m
+kube-system  calico-kube-controllers-6f8d4-tgb   1/1    Running  0         2m
+kube-system  calico-node-24h85                   2/2    Running  0         2m
+kube-system  etcd                                1/1    Running  0         6m
+kube-system  kube-apiserver                      1/1    Running  0         6m
+kube-system  kube-controller-manager             1/1    Running  0         6m
+kube-system  kube-dns-545bc4bfd4-67qqp           3/3    Running  0         5m
+kube-system  kube-proxy-8fzp2                    1/1    Running  0         5m
+kube-system  kube-scheduler                      1/1    Running  0         5m
+```
+
+7. Remove the restriction on the master node to allow scheduling of containers on it.
+
+```
+kubectl taint nodes –all node-role.kubernetes.io/master-
+```
+
+8. Verify that you now have one node available in the cluster for scheduling container by executing `kubectl get nodes`.
+
+9. Test your Kubernetes installation by running and NginX deployment (optional). The deployment will create two pods with NginX that are load-balanced automatically, when the solution is running on port 80.
+
+```
+kubectl run my-nginx --image=nginx --replicas=2 --port=80
+
+# if the cluster is working correctly you should see th following output
+# if you run (the name of the pods in the deployment may be different): 
+
+kubectl get deployments
+
+NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+my-nginx   2         2         2            2           15s
+
+kubectl get pods
+
+NAME                       READY     STATUS        RESTARTS   AGE
+my-nginx-568fcc5c7-2p22n   1/1       Running       0          20s
+my-nginx-568fcc5c7-d6j6x   1/1       Running       0          20s
+```
+10. Remove your nginx deployment by doing `kubectl delete deployment my-nginx`.
+
+### Download and Install Hyperledger Fabric
+
+
 
 
 
