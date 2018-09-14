@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabric-ca-org1
+  labels:
+    app: fabric-ca-org1
+spec:
+  ports:
+  - port: 7054
+    targetPort: 7054
+  selector:
+    app: fabric-ca-org1
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fabric-ca-org1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fabric-ca-org1
+    spec:
+      containers:
+      - name: fabric-ca-org1
+        image: hyperledger/fabric-ca
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 7054
+        command: ["fabric-ca-server", "start", "--ca.certfile", "/etc/hyperledger/fabric-ca-server-config/ca.org1.kopernik.ibm.org-cert.pem", "--ca.keyfile", "/etc/hyperledger/fabric-ca-server-config/fbf617542f589cb7cf86c9b97f10d6ee16b03cf90307193b06188ef5a6c9e1ae_sk", "-b", "admin:adminpw", "-d"]
+        volumeMounts:
+        - mountPath: /etc/hyperledger/fabric-ca-server-config
+          name: org1-ca-volume
+        env:
+        - name: FABRIC_CA_HOME
+          value: "/etc/hyperledger/fabric-ca-server"
+        - name: FABRIC_CA_SERVER_CA_NAME
+          value: "ca-org1"
+        - name: FABRIC_CA_SERVER_TLS_ENABLED
+          value: "true"
+        - name: FABRIC_CA_SERVER_TLS_CERTFILE
+          value: "/etc/hyperledger/fabric-ca-server-config/ca.org1.kopernik.ibm.org-cert.pem"
+        - name: FABRIC_CA_SERVER_TLS_KEYFILE
+          value: "/etc/hyperledger/fabric-ca-server-config/fbf617542f589cb7cf86c9b97f10d6ee16b03cf90307193b06188ef5a6c9e1ae_sk"
+      volumes:
+      - name: org1-ca-volume
+        hostPath:
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/crypto-config/peerOrganizations/org1.kopernik.ibm.org/ca

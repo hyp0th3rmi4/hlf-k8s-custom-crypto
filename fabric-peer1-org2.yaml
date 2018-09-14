@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert -f docker-compose-e2e.yaml
+    kompose.version: 1.12.0 (0ab07be)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: fabric-peer1-org2
+  name: fabric-peer1-org2
+spec:
+  ports:
+  - name: "7051"
+    port: 7051
+    targetPort: 7051
+  - name: "7052"
+    port: 7052
+    targetPort: 7052
+  - name: "7053"
+    port: 7053
+    targetPort: 7053
+  selector:
+    io.kompose.service: fabric-peer1-org2
+status:
+  loadBalancer: {}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert -f docker-compose-e2e.yaml
+    kompose.version: 1.12.0 (0ab07be)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: fabric-peer1-org2
+  name: fabric-peer1-org2
+spec:
+  replicas: 1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: fabric-peer1-org2
+    spec:
+      containers:
+      - args:
+        - peer
+        - node
+        - start
+        env:
+        - name: CORE_LOGGING_LEVEL
+          value: DEBUG
+        - name: CORE_PEER_ADDRESS
+          value: "peer1.org2.kopernik.ibm.org:7051"
+        - name: CORE_PEER_CHAINCODEADDRESS
+          value: "peer1.org2.kopernik.ibm.org:7052"
+        - name: CORE_PEER_CHAINCODELISTENADDRESS
+          value: 0.0.0.0:7052
+        - name: CORE_PEER_GOSSIP_EXTERNALENDPOINT
+          value: "peer1.org2.kopernik.ibm.org:7051"
+        - name: CORE_PEER_GOSSIP_ORGLEADER
+          value: "false"
+        - name: CORE_PEER_GOSSIP_USELEADERELECTION
+          value: "true"
+        - name: CORE_PEER_ID
+          value: "peer1.org2.kopernik.ibm.org" 
+        - name: CORE_PEER_LOCALMSPID
+          value: Org2MSP
+        - name: CORE_PEER_PROFILE_ENABLED
+          value: "true"
+        - name: CORE_PEER_TLS_ENABLED
+          value: "true"
+        - name: CORE_CHAINCODE_LOGGING_LEVEL
+          value: "DEBUG"
+        - name: CORE_VM_DOCKER_HOSTCONFIG_DNS
+          value: "10.96.0.10"
+        - name: CORE_VM_DOCKER_ATTACHSTDOUT
+          value: "true"
+        - name: CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE
+          value: bridge
+        - name: CORE_VM_ENDPOINT
+          value: unix:///host/var/run/docker.sock
+        - name: CORE_PEER_TLS_CERT_FILE
+          value: /etc/hyperledger/fabric/tls/server.crt
+        - name: CORE_PEER_TLS_KEY_FILE
+          value: /etc/hyperledger/fabric/tls/server.key
+        - name: CORE_PEER_TLS_ROOTCERT_FILE
+          value: /etc/hyperledger/fabric/tls/ca.crt
+        - name: CORE_LEDGER_STATE_STATEDATABASE
+          value: "CouchDB"
+        - name: CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS
+          value: "fabric-couchdb-04:5984"
+        image: hyperledger/fabric-peer
+        imagePullPolicy: Never
+        name: fabric-peer1-org2
+        ports:
+        - containerPort: 7051
+        - containerPort: 7052
+        - containerPort: 7053
+        resources: {}
+        volumeMounts:
+        - mountPath: /host/var/run/docker.sock
+          name: fabric-peer1-org2-claim0
+        - mountPath: /etc/hyperledger/fabric/msp
+          name: fabric-peer1-org2-claim1
+        - mountPath: /etc/hyperledger/fabric/tls
+          name: fabric-peer1-org2-claim2
+        workingDir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+      dnsConfig:       
+        options:       
+          - name: ndots
+            value: "1" 
+      volumes:
+      - name: fabric-peer1-org2-claim0
+        hostPath:
+          path: /var/run/docker.sock
+      - name: fabric-peer1-org2-claim1
+        hostPath: 
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/crypto-config/peerOrganizations/org2.kopernik.ibm.org/peers/peer1.org2.kopernik.ibm.org/msp
+      - name: fabric-peer1-org2-claim2
+        hostPath:
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/crypto-config/peerOrganizations/org2.kopernik.ibm.org/peers/peer1.org2.kopernik.ibm.org/tls
+status: {}

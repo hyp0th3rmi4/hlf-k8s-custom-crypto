@@ -1,0 +1,85 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert -f docker-compose-cli.yaml
+    kompose.version: 1.12.0 (0ab07be)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: cli
+  name: fabric-cli
+spec:
+  replicas: 1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: cli
+    spec:
+      containers:
+      - args:
+        - /bin/bash
+        - -c
+   #    - "while true; do sleep 30; done;" 
+        - sleep 15 ; ./scripts/script.sh mychannel; sleep 90
+        env:
+        - name: CORE_LOGGING_LEVEL
+          value: DEBUG
+        - name: CORE_PEER_ADDRESS
+          value: fabric-peer0-org1:7051
+        - name: CORE_PEER_ID
+          value: cli
+        - name: CORE_PEER_LOCALMSPID
+          value: Org1MSP
+        - name: CORE_PEER_MSPCONFIGPATH
+          value: /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.kopernik.ibm.org/users/Admin@org1.kopernik.ibm.org/msp
+        - name: CORE_PEER_TLS_CERT_FILE
+          value: /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.kopernik.ibm.org/peers/peer0.org1.kopernik.ibm.org/tls/server.crt
+        - name: CORE_PEER_TLS_ENABLED
+          value: "true"
+        - name: CORE_PEER_TLS_KEY_FILE
+          value: /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.kopernik.ibm.org/peers/peer0.org1.kopernik.ibm.org/tls/server.key
+        - name: CORE_PEER_TLS_ROOTCERT_FILE
+          value: /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.kopernik.ibm.org/peers/peer0.org1.kopernik.ibm.org/tls/ca.crt
+        - name: CORE_VM_ENDPOINT
+          value: unix:///host/var/run/docker.sock
+        - name: GOPATH
+          value: /opt/gopath
+        image: hyperledger/fabric-tools
+        imagePullPolicy: Never
+        name: cli
+        resources: {}
+        tty: true
+        volumeMounts:
+        - mountPath: /host/var/run/docker.sock
+          name: cli-claim0
+        - mountPath: /opt/gopath/src/github.com/hyperledger/fabric/examples/chaincode/go
+          name: cli-claim1
+        - mountPath: /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+          name: cli-claim2
+        - mountPath: /opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+          name: cli-claim3
+        - mountPath: /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+          name: cli-claim4
+        workingDir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+      dnsConfig:       
+        options:       
+          - name: ndots
+            value: "1" 
+      volumes:
+      - name: cli-claim0
+        hostPath:
+          path: /var/run/docker.sock
+      - name: cli-claim1
+        hostPath:
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/examples/chaincode/go
+      - name: cli-claim2
+        hostPath:
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/crypto-config
+      - name: cli-claim3
+        hostPath:
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/scripts
+      - name: cli-claim4
+        hostPath:
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/channel-artifacts
+status: {}

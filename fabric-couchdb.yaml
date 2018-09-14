@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabric-couchdb-01
+  labels:
+    app: fabric-couchdb-01
+spec:
+  ports:
+  - port: 5984
+    targetPort: 5984
+  selector:
+    app: fabric-couchdb-01
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabric-couchdb-02
+  labels:
+    app: fabric-couchdb-02
+spec:
+  ports:
+  - port: 5984
+    targetPort: 5984
+  selector:
+    app: fabric-couchdb-02
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabric-couchdb-03
+  labels:
+    app: fabric-couchdb-03
+spec:
+  ports:
+  - port: 5984
+    targetPort: 5984
+  selector:
+    app: fabric-couchdb-03
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabric-couchdb-04
+  labels:
+    app: fabric-couchdb-04
+spec:
+  ports:
+  - port: 5984
+    targetPort: 5984
+  selector:
+    app: fabric-couchdb-04
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fabric-couchdb-01
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fabric-couchdb-01
+    spec:
+      containers:
+      - name: fabric-couchdb-01
+        image: hyperledger/fabric-couchdb
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5984
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fabric-couchdb-02
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fabric-couchdb-02
+    spec:
+      containers:
+      - name: fabric-couchdb-02
+        image: hyperledger/fabric-couchdb
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5984
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fabric-couchdb-03
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fabric-couchdb-03
+    spec:
+      containers:
+      - name: fabric-couchdb-03
+        image: hyperledger/fabric-couchdb
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5984
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fabric-couchdb-04
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fabric-couchdb-04
+    spec:
+      containers:
+      - name: fabric-couchdb-04
+        image: hyperledger/fabric-couchdb
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5984

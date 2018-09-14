@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert -f docker-compose-e2e.yaml
+    kompose.version: 1.12.0 (0ab07be)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: fabric-kafka2
+  name: fabric-kafka2
+spec:
+  ports:
+  - name: "9092"
+    port: 9092
+    targetPort: 9092
+  selector:
+    io.kompose.service: fabric-kafka2
+status:
+  loadBalancer: {}

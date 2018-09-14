@@ -1,0 +1,80 @@
+apiVersion: v1
+data:
+  Corefile: |
+    .:53 {
+        log
+        errors
+        health
+        rewrite {
+            name regex zookeeper0\.kopernik\.ibm\.org fabric-zookeeper0.default.svc.kopernik.ibm.org
+            answer name fabric-zookeeper0\.default\.svc\.kopernik\.ibm\.org zookeeper0.kopernik.ibm.org
+        }
+        rewrite {
+            name regex zookeeper1\.kopernik\.ibm\.org fabric-zookeeper1.default.svc.kopernik.ibm.org
+            answer name fabric-zookeeper1\.default\.svc\.kopernik\.ibm\.org zookeeper1.kopernik.ibm.org
+        }
+        rewrite {
+            name regex zookeeper2\.kopernik\.ibm\.org fabric-zookeeper2.default.svc.kopernik.ibm.org
+            answer name fabric-zookeeper2\.default\.svc\.kopernik\.ibm\.org zookeeper2.kopernik.ibm.org
+        }
+        rewrite {
+            name regex kafka0\.kopernik\.ibm\.org fabric-kafka0.default.svc.kopernik.ibm.org
+            answer name fabric-kafka0\.default\.svc\.kopernik\.ibm\.org kafka0.kopernik.ibm.org
+        }
+        rewrite {
+            name regex kafka1\.kopernik\.ibm\.org fabric-kafka1.default.svc.kopernik.ibm.org
+            answer name fabric-kafka1\.default\.svc\.kopernik\.ibm\.org kafka1.kopernik.ibm.org
+        }
+        rewrite {
+            name regex kafka2\.kopernik\.ibm\.org fabric-kafka2.default.svc.kopernik.ibm.org
+            answer name fabric-kafka2\.default\.svc\.kopernik\.ibm\.org kafka2.kopernik.ibm.org
+        }
+        rewrite {
+            name regex kafka3\.kopernik\.ibm\.org fabric-kafka3.default.svc.kopernik.ibm.org
+            answer name fabric-kafka3\.default\.svc\.kopernik\.ibm\.org kafka3.kopernik.ibm.org
+        }
+        rewrite {
+            name regex orderer\.kopernik\.ibm\.org fabric-orderer.default.svc.kopernik.ibm.org
+            answer name fabric-orderer\.default\.svc\.kopernik\.ibm\.org orderer.kopernik.ibm.org
+        }
+        rewrite {
+            name regex peer0\.org1\.kopernik\.ibm\.org fabric-peer0-org1.default.svc.kopernik.ibm.org
+            answer name fabric-peer0-org1\.default\.svc\.kopernik\.ibm\.org peer0.org1.kopernik.ibm.org
+        }
+        rewrite {
+            name regex peer1\.org1\.kopernik\.ibm\.org fabric-peer1-org1.default.svc.kopernik.ibm.org
+            answer name fabric-peer1-org1\.default\.svc\.kopernik\.ibm\.org peer1.org1.kopernik.ibm.org
+        }
+        rewrite {
+            name regex peer0\.org2\.kopernik\.ibm\.org fabric-peer0-org2.default.svc.kopernik.ibm.org
+            answer name fabric-peer0-org2\.default\.svc\.kopernik\.ibm\.org peer0.org2.kopernik.ibm.org
+        }
+        rewrite {
+            name regex peer1\.org2\.kopernik\.ibm\.org fabric-peer1-org2.default.svc.kopernik.ibm.org
+            answer name fabric-peer1-org2\.default\.svc\.kopernik\.ibm\.org peer1.org2.kopernik.ibm.org
+        }
+        rewrite {
+            name regex ca\.org1\.kopernik\.ibm\.org fabric-ca-org1.default.svc.kopernik.ibm.org
+            answer name fabric-ca-org1\.default\.svc\.kopernik\.ibm\.org ca.org1.kopernik.ibm.org
+        }
+        rewrite {
+            name regex ca\.org2\.kopernik\.ibm\.org fabric-ca-org2.default.svc.kopernik.ibm.org
+            answer name fabric-ca-org2\.default\.svc\.kopernik\.ibm\.org ca.org2.kopernik.ibm.org
+        }
+        kubernetes kopernik.ibm.org in-addr.arpa ip6.arpa {
+           pods insecure
+           upstream
+           fallthrough in-addr.arpa ip6.arpa
+        }
+        prometheus :9153
+        proxy . /etc/resolv.conf
+        cache 30
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2018-05-25T20:30:11Z
+  name: coredns
+  namespace: kube-system
+  resourceVersion: "268996"
+  selfLink: /api/v1/namespaces/kube-system/configmaps/coredns
+  uid: 6c2b532c-605a-11e8-94ad-000c293f3c04

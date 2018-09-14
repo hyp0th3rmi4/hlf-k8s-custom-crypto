@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fabric-orderer
+  labels:
+    app: fabric-orderer
+spec:
+  ports:
+  - port: 7050
+    targetPort: 7050
+  selector:
+    app: fabric-orderer
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fabric-orderer
+  labels:
+    app: fabric-orderer
+spec:
+  replicas: 1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: fabric-orderer
+    spec:
+      containers:
+      - command: ["orderer"]
+        env:
+        - name: ORDERER_GENERAL_GENESISFILE
+          value: /var/hyperledger/orderer/orderer.genesis.block
+        - name: ORDERER_GENERAL_GENESISMETHOD
+          value: file
+        - name: ORDERER_GENERAL_LISTENADDRESS
+          value: 0.0.0.0
+        - name: ORDERER_GENERAL_LOCALMSPDIR
+          value: /var/hyperledger/orderer/msp
+        - name: ORDERER_GENERAL_LOCALMSPID
+          value: OrdererMSP
+        - name: ORDERER_GENERAL_LOGLEVEL
+          value: debug
+        - name: ORDERER_GENERAL_TLS_CERTIFICATE
+          value: /var/hyperledger/orderer/tls/server.crt
+        - name: ORDERER_GENERAL_TLS_ENABLED
+          value: "true"
+        - name: ORDERER_GENERAL_TLS_PRIVATEKEY
+          value: /var/hyperledger/orderer/tls/server.key
+        - name: ORDERER_GENERAL_TLS_ROOTCAS
+          value: '[/var/hyperledger/orderer/tls/ca.crt]'
+        - name: ORDERER_KAFKA_RETRY_SHORTINTERVAL
+          value: 1s
+        - name: ORDERER_KAFKA_RETRY_SHORTTOTAL
+          value: 30s
+        - name: ORDERER_KAFKA_VERBOSE
+          value: "true"
+        image: hyperledger/fabric-orderer
+        imagePullPolicy: Never
+        name: fabric-orderer
+        ports:
+        - containerPort: 7050
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/hyperledger/orderer/orderer.genesis.block
+          name: fabric-orderer-claim0
+        - mountPath: /var/hyperledger/orderer/msp
+          name: fabric-orderer-claim1
+        - mountPath: /var/hyperledger/orderer/tls
+          name: fabric-orderer-claim2
+        workingDir: /opt/gopath/src/github.com/hyperledger/fabric
+      dnsConfig:       
+        options:       
+          - name: ndots
+            value: "1" 
+      volumes:
+      - name: fabric-orderer-claim0
+        hostPath:
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/channel-artifacts/genesis.block
+      - name: fabric-orderer-claim1
+        hostPath:
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/crypto-config/ordererOrganizations/kopernik.ibm.org/orderers/orderer.kopernik.ibm.org/msp
+      - name: fabric-orderer-claim2
+        hostPath:
+          path: /home/hlbcadmin/Downloads/mysolution/fabric-e2e-custom/crypto-config/ordererOrganizations/kopernik.ibm.org/orderers/orderer.kopernik.ibm.org/tls 

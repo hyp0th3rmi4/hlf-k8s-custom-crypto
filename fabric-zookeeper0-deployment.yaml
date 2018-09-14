@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert -f docker-compose-e2e.yaml
+    kompose.version: 1.12.0 (0ab07be)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: fabric-zookeeper0
+  name: fabric-zookeeper0
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: fabric-zookeeper0
+    spec:
+      containers:
+      - env:
+        - name: ZOO_MY_ID
+          value: "1"
+        - name: ZOO_SERVERS
+          value: server.1=0.0.0.0:2888:3888 server.2=zookeeper1.kopernik.ibm.org:2888:3888 server.3=zookeeper2.kopernik.ibm.org:2888:3888
+        image: hyperledger/fabric-zookeeper
+        name: zookeeper0
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888
+        resources: {}
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
+status: {}
