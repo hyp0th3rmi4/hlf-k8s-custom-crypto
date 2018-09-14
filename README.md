@@ -6,7 +6,7 @@ The sample code is of support to the DeveloperWorks article that discusses in de
 
 ## Setup Instructions
 
-The installation process is discussed in detail in the associated [DeveloperWorks Article](TBD) but here are some quick steps on how to setup your own environment. The setup instructions are based on a RedHat Enterprise Linux operating systems.
+The installation process is discussed in detail in the associated [DeveloperWorks Article](TBD) but here are some quick steps on how to setup your own environment. The setup instructions are based on a RedHat Enterprise Linux (RHEL) operating systems. Because we use RHEL, the installation requires Docker Enterprise Edition and therefore the following section may chang for other Linux distributions such as Ubuntu.
 
 ### Installation of Docker Enterprise 
 
@@ -194,6 +194,9 @@ my-nginx-568fcc5c7-d6j6x   1/1       Running       0          20s
 ```
 
 
+### Enable Custom TLS
+
+[TBD]
 
 
 
